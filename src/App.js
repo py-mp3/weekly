@@ -1,4 +1,5 @@
 import "./App.css";
+import Signup from "./components/Signup";
 
 function App() {
   return (
@@ -7,6 +8,7 @@ function App() {
       <p className="text-pink-300 text-center font-bold">
         No Dates, Just Weekdays!
       </p>
+      <Signup />
     </div>
   );
 }
