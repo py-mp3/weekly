@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 
-const Signup = () => {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -13,7 +13,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    createUserWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password)
       .then((user) => {
         console.log(user);
         navigate("/dashboard");
@@ -25,7 +25,7 @@ const Signup = () => {
 
   return (
     <div>
-      <h1 class="text-center">Sign Up to Weekly</h1>
+      <h1 class="text-center">Login to Weekly</h1>
       <form onSubmit={handleSubmit}>
         <div class="my-2">
           <input
@@ -50,17 +50,17 @@ const Signup = () => {
           type="submit"
           className="bg-blue-500 text-white rounded-md shadow-sm w-full my-2"
         >
-          Sign Up
+          Login
         </button>
         <Link
-          to="/login"
+          to="/"
           className="bg-green-500 text-white rounded-md shadow-sm w-full my-2"
         >
-          Login
+          Signup
         </Link>
       </form>
     </div>
   );
-};
+}
 
-export default Signup;
+export default Login;
