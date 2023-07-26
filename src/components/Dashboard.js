@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import Schedule from "../features/schedule/Schedule";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [email, setemail] = useState("");
   const logout = () => {
     try {
       signOut(auth)
@@ -23,12 +25,22 @@ function Dashboard() {
     }
   };
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("auth changed!");
+        setemail(auth.currentUser.email);
+      }
+    });
+  }, []);
+
   return (
     <div>
-      <h3>Dashboard of {auth.currentUser.email}</h3>
+      <h3>Dashboard of {email}</h3>
       <button className="bg-red-500 text-white" onClick={logout}>
         Logout
       </button>
+      <Schedule />
     </div>
   );
 }
