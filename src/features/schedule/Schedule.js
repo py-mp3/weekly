@@ -46,7 +46,6 @@ function Schedule() {
   };
 
   useEffect(() => {
-    getLatestSchedule();
     onAuthStateChanged(auth, (user) => {
       if (user) {
         getLatestSchedule();
@@ -64,6 +63,7 @@ function Schedule() {
       </button>
       <h3>Update : {updated}</h3>
       <h3>Saved changes : {savedChanges.toString()}</h3>
+      <h3> Hostname : {window.location.hostname}</h3>
       <table className="table-auto w-full">
         <thead>
           <tr>

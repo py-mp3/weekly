@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 
+import Schedule from "../features/schedule/Schedule";
+
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import Schedule from "../features/schedule/Schedule";
 
 function Dashboard() {
   const navigate = useNavigate();
