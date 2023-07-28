@@ -14,10 +14,10 @@ function App() {
         No Dates, Just Weekdays!
       </p>
       <Routes>
-        <Route path="/" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/share/:slug" element={<Share />} />
+        <Route exact path="/" element={<Signup />} />
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/dashboard" element={<Dashboard />} />
+        <Route exact path="/share/:slug" element={<Share />} />
       </Routes>
     </div>
   );
