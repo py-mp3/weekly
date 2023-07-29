@@ -6,6 +6,9 @@ import { db, auth } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Schedule() {
   const [updated, setupdated] = useState(0);
   const [schedule, setSchedule] = useState(data.schedule);
@@ -25,6 +28,7 @@ function Schedule() {
       setSavedChanges(true);
       setupdated(0);
       setStatus("Schedule updated ");
+      toast("Changes update to weekly schedule");
     } catch {
       alert("Unable to connect!");
     }
@@ -57,6 +61,7 @@ function Schedule() {
         email.length - 10
       )}`
     );
+    toast("Link Copied !");
   };
 
   useEffect(() => {
@@ -74,6 +79,7 @@ function Schedule() {
 
   return (
     <div className="p-4">
+      <ToastContainer />
       <h3>Main time {moment().format("MMMM Do YYYY, h:mm:ss a")}</h3>
       <h2 className="text-2xl font-bold mb-4">Weekly Schedule</h2>
 
@@ -105,7 +111,7 @@ function Schedule() {
       <a
         target="_blank"
         rel="noreferrer"
-        href={`/#/share/${email.slice(0, email.length - 10)}`}
+        href={`weekly/#/share/${email.slice(0, email.length - 10)}`}
       >
         <button className="bg-green-100 hover:bg-green-300 p-1 rounded-md mx-2">
           Check your schedule publicly
