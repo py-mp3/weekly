@@ -11,6 +11,7 @@ function Schedule() {
   const [schedule, setSchedule] = useState(data.schedule);
   const [savedChanges, setSavedChanges] = useState(true);
   const [status, setStatus] = useState("saved");
+  const [email, setEmail] = useState("loading...");
 
   const days = Object.keys(data.schedule);
   const timings = data.schedule[days[0]].map((slot) => slot.timeUTC);
@@ -18,7 +19,7 @@ function Schedule() {
   const saveChanges = async () => {
     setStatus("Updating schedule... please wait");
     try {
-      await setDoc(doc(db, "users/" + auth.currentUser.email), {
+      await setDoc(doc(db, "users/" + email), {
         schedule: schedule,
       });
       setSavedChanges(true);
@@ -51,18 +52,21 @@ function Schedule() {
 
   const copyScheduleLink = async () => {
     navigator.clipboard.writeText(
-      `${
-        window.location.hostname
-      }/weekly/#/share/${auth.currentUser.email.slice(
+      `${window.location.hostname}/weekly/#/share/${email.slice(
         0,
-        auth.currentUser.email.length - 10
+        email.length - 10
       )}`
     );
   };
 
   useEffect(() => {
+    if (auth.currentUser) {
+      setEmail(auth.currentUser.email);
+      getLatestSchedule();
+    }
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        setEmail(user.email);
         getLatestSchedule();
       }
     });
@@ -101,12 +105,7 @@ function Schedule() {
       <a
         target="_blank"
         rel="noreferrer"
-        href={`${
-          window.location.hostname
-        }/weekly/#/share/${auth.currentUser.email.slice(
-          0,
-          auth.currentUser.email.length - 10
-        )}`}
+        href={`/#/share/${email.slice(0, email.length - 10)}`}
       >
         <button className="bg-green-100 hover:bg-green-300 p-1 rounded-md mx-2">
           Check your schedule publicly
@@ -118,7 +117,7 @@ function Schedule() {
       >
         Copy schedule link to share : {window.location.hostname}
         /weekly/#/share/
-        {auth.currentUser.email.slice(0, auth.currentUser.email.length - 10)}
+        {email.slice(0, email.length - 10)}
       </button>
       <div
         style={{ height: "50vh" }}
