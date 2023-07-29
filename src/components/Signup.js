@@ -57,7 +57,7 @@ const Signup = () => {
           to="/login"
           className="bg-green-500 text-white rounded-md shadow-sm w-full my-2"
         >
-          Login
+          Already have account? Click here to Login
         </Link>
       </form>
     </div>

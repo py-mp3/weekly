@@ -56,7 +56,7 @@ function Login() {
           to="/"
           className="bg-green-500 text-white rounded-md shadow-sm w-full my-2"
         >
-          Signup
+          Don't have account? Click here to Signup
         </Link>
       </form>
     </div>

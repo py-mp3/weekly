@@ -4,9 +4,8 @@ import { useParams } from "react-router-dom";
 import data from "./../schedule/data.json";
 import moment from "moment-timezone";
 
-import { db, auth } from "../../firebase";
+import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 
 function Share() {
   const { slug } = useParams();
@@ -29,11 +28,7 @@ function Share() {
   };
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        getLatestSchedule();
-      }
-    });
+    getLatestSchedule();
   }, []);
 
   return (
