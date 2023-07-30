@@ -43,17 +43,6 @@ function Schedule() {
     setStatus("Not saved");
   };
 
-  const getLatestSchedule = async () => {
-    const docRef = doc(db, "users/" + auth.currentUser.email);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      setSchedule(docSnap.data().schedule);
-    } else {
-      console.log("No such document!");
-    }
-  };
-
   const copyScheduleLink = async () => {
     navigator.clipboard.writeText(
       `${window.location.hostname}/weekly/#/share/${email.slice(
@@ -65,6 +54,15 @@ function Schedule() {
   };
 
   useEffect(() => {
+    const getLatestSchedule = async () => {
+      const docRef = doc(db, "users/" + auth.currentUser.email);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setSchedule(docSnap.data().schedule);
+      } else {
+        console.log("No such document!");
+      }
+    };
     if (auth.currentUser) {
       setEmail(auth.currentUser.email);
       getLatestSchedule();
@@ -78,9 +76,9 @@ function Schedule() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div>
       <ToastContainer />
-      <h3>Main time {moment().format("MMMM Do YYYY, h:mm:ss a")}</h3>
+      <h3>Last Updated: {moment().format("MMMM Do YYYY, h:mm:ss a")}</h3>
       <h2 className="text-2xl font-bold mb-4">Weekly Schedule</h2>
 
       <button
@@ -94,24 +92,27 @@ function Schedule() {
 
       <span> {status}</span>
 
-      <h3>
+      <div>
         Saved changes :
         {savedChanges ? (
           <span className="text-green-700 font-bold">
-            Your changes are in sync with weekly
+            Your schedule is synced with weekly
           </span>
         ) : (
           <span className="text-red-500 font-bold animate-pulse">
             Please save the changes.
           </span>
         )}
-      </h3>
-      <h3>Update : {updated}</h3>
-      <h3> Hostname : {window.location.hostname}</h3>
+        <span> {updated} unsaved changes</span>
+      </div>
+
       <a
         target="_blank"
         rel="noreferrer"
-        href={`weekly/#/share/${email.slice(0, email.length - 10)}`}
+        href={`https://${window.location.hostname}/weekly/#/share/${email.slice(
+          0,
+          email.length - 10
+        )}`}
       >
         <button className="bg-green-100 hover:bg-green-300 p-1 rounded-md mx-2">
           Check your schedule publicly
@@ -127,12 +128,12 @@ function Schedule() {
       </button>
       <div
         style={{ height: "50vh" }}
-        className="text-clip border-4 border-black overflow-auto"
+        className="text-clip border-2 border-black overflow-auto rounded-md"
       >
         <table className="table-auto w-full">
-          <thead className="sticky top-0 left-0 right-0 bg-yellow-300">
+          <thead className="sticky top-0 left-0 right-0 bg-yellow-300 ">
             <tr>
-              <th className="px-4 py-2 w-1/12"></th>
+              <th className="px-4 py-2 w-1/12 "></th>
               {days.map((day) => (
                 <th key={day} className="px-4 py-2">
                   {day}
@@ -143,11 +144,13 @@ function Schedule() {
           <tbody className="">
             {timings.map((time) => (
               <tr key={time}>
-                <td className="px-4 py-2 w-1/12">{time}</td>
+                <td className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
+                  {time}
+                </td>
                 {days.map((day) => (
                   <td
                     key={`${day}-${time}`}
-                    className={`border px-4 py-2 ${
+                    className={`border px-4 py-2 rounded-md ${
                       schedule[day].find((slot) => slot.timeUTC === time)
                         .label === "free"
                         ? "bg-green-300"
@@ -162,22 +165,26 @@ function Schedule() {
                         }
                       </span>
                       <span>
-                        <button
-                          onClick={() => {
-                            editSchedule(day, time, "free");
-                          }}
-                          className="text-white bg-green-600"
-                        >
-                          Free
-                        </button>
-                        <button
-                          onClick={() => {
-                            editSchedule(day, time, "not free");
-                          }}
-                          className="text-white bg-red-600"
-                        >
-                          Not
-                        </button>
+                        {schedule[day].find((slot) => slot.timeUTC === time)
+                          .label === "free" ? (
+                          <button
+                            onClick={() => {
+                              editSchedule(day, time, "not free");
+                            }}
+                            className="text-white bg-red-600 px-1 rounded-md"
+                          >
+                            Block
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              editSchedule(day, time, "free");
+                            }}
+                            className="text-white bg-green-600 px-1 rounded-md"
+                          >
+                            Free
+                          </button>
+                        )}
                       </span>
                     </div>
                   </td>

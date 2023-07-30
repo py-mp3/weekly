@@ -15,21 +15,19 @@ function Share() {
   const days = Object.keys(data.schedule);
   const timings = data.schedule[days[0]].map((slot) => slot.timeUTC);
 
-  const getLatestSchedule = async () => {
-    const docRef = doc(db, "users/" + slug + "@gmail.com");
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      setSchedule(docSnap.data().schedule);
-    } else {
-      console.log("No such document!");
-      setIncorrectProfile(true);
-    }
-  };
-
   useEffect(() => {
+    const getLatestSchedule = async () => {
+      const docRef = doc(db, "users/" + slug + "@gmail.com");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setSchedule(docSnap.data().schedule);
+      } else {
+        console.log("No such document!");
+        setIncorrectProfile(true);
+      }
+    };
     getLatestSchedule();
-  }, []);
+  }, [slug]);
 
   return (
     <div className="p-4">

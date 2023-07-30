@@ -36,9 +36,12 @@ function Dashboard() {
   }, []);
 
   return (
-    <div>
-      <h3>Dashboard of {email}</h3>
-      <button className="bg-red-500 text-white" onClick={logout}>
+    <div className="p-2">
+      <span>Dashboard of {email}</span>
+      <button
+        className="bg-red-400 text-white px-1 rounded-md hover:bg-red-500"
+        onClick={logout}
+      >
         Logout
       </button>
       <Schedule />
