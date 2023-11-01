@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import data from "./data.json";
 import moment from "moment-timezone";
+import convertScheduleToTimeZone from "./convertTimeZone";
 
 import { db, auth } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -15,6 +16,7 @@ function Schedule() {
   const [savedChanges, setSavedChanges] = useState(true);
   const [status, setStatus] = useState("saved");
   const [email, setEmail] = useState("loading...");
+  const [currentTimeZone, setCurrentTimeZone] = useState("Asia/Kolkata");
 
   const days = Object.keys(data.schedule);
   const timings = data.schedule[days[0]].map((slot) => slot.timeUTC);
@@ -45,12 +47,17 @@ function Schedule() {
 
   const copyScheduleLink = async () => {
     navigator.clipboard.writeText(
-      `${window.location.hostname}/weekly/#/share/${email.slice(
+      `https://vishesh-pandey.github.io/weekly/#/share/${email.slice(
         0,
         email.length - 10
       )}`
     );
     toast("Link Copied !");
+  };
+
+  const changeTimeZone = (to) => {
+    setSchedule(convertScheduleToTimeZone(schedule, currentTimeZone, to));
+    setCurrentTimeZone(to);
   };
 
   useEffect(() => {
@@ -109,7 +116,7 @@ function Schedule() {
       <a
         target="_blank"
         rel="noreferrer"
-        href={`https://${window.location.hostname}/weekly/#/share/${email.slice(
+        href={`https://vishesh-pandey.github.io/weekly/#/share/${email.slice(
           0,
           email.length - 10
         )}`}
@@ -120,12 +127,48 @@ function Schedule() {
       </a>
       <button
         onClick={copyScheduleLink}
-        className="bg-yellow-100 hover:bg-yellow-300 p-1 rounded-md mx-2"
+        className="bg-blue-100 hover:bg-blue-300 p-1 rounded-md mx-2"
       >
-        Copy schedule link to share : {window.location.hostname}
-        /weekly/#/share/
+        Copy schedule link to share : vishesh-pandey.github.io/weekly/#/share/
         {email.slice(0, email.length - 10)}
       </button>
+      <div>
+        <button
+          onClick={() => {
+            changeTimeZone("Asia/Kolkata");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md"
+        >
+          IST
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("Europe/London");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md"
+        >
+          British Summer Time (BST) - Europe/London
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("Europe/Lisbon");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md"
+        >
+          Western European Summer Time (WEST) - Europe/Lisbon
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("EST");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md"
+        >
+          EST
+        </button>
+      </div>
+      <div>
+        <h3>Current time zone : {currentTimeZone}</h3>
+      </div>
       <div
         style={{ height: "50vh" }}
         className="text-clip border-2 border-black overflow-auto rounded-md"

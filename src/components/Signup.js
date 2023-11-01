@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { auth } from "../firebase";
 
 const Signup = () => {
@@ -9,7 +13,22 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  const provider = new GoogleAuthProvider();
+
   const navigate = useNavigate();
+
+  const googleSignup = () => {
+    // signInWithRedirect(auth, provider);
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log(result.user);
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.log("Error is : ");
+        console.log(error);
+      });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,7 +44,7 @@ const Signup = () => {
   };
 
   return (
-    <div>
+    <div className="w-6/12 text-center m-auto">
       <h1 class="text-center">Sign Up to Weekly</h1>
       <form onSubmit={handleSubmit}>
         <div class="my-2">
@@ -53,6 +72,7 @@ const Signup = () => {
         >
           Sign Up
         </button>
+
         <Link
           to="/login"
           className="bg-green-500 text-white rounded-md shadow-sm w-full my-2"
@@ -60,6 +80,12 @@ const Signup = () => {
           Already have account? Click here to Login
         </Link>
       </form>
+      <button
+        onClick={googleSignup}
+        className="bg-blue-500 text-white rounded-md shadow-sm w-full my-2"
+      >
+        Continue with google
+      </button>
     </div>
   );
 };

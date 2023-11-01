@@ -24,7 +24,7 @@ function Login() {
   };
 
   return (
-    <div>
+    <div className="w-6/12 text-center m-auto">
       <h1 class="text-center">Login to Weekly</h1>
       <form onSubmit={handleSubmit}>
         <div class="my-2">
@@ -56,7 +56,7 @@ function Login() {
           to="/"
           className="bg-green-500 text-white rounded-md shadow-sm w-full my-2"
         >
-          Don't have account? Click here to Signup
+          Don't have account? Click here to Signup or to Continue with google
         </Link>
       </form>
     </div>
