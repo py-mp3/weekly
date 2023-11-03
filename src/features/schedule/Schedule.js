@@ -19,7 +19,7 @@ function Schedule() {
   const [currentTimeZone, setCurrentTimeZone] = useState("Asia/Kolkata");
 
   const days = Object.keys(data.schedule);
-  const timings = data.schedule[days[0]].map((slot) => slot.timeUTC);
+  const timings = data.schedule[days[0]].map((slot) => slot.timeSlot);
 
   const saveChanges = async () => {
     setStatus("Updating schedule... please wait");
@@ -38,7 +38,7 @@ function Schedule() {
 
   const editSchedule = (day, time, update) => {
     let updatedSchedule = schedule;
-    updatedSchedule[day].find((slot) => slot.timeUTC === time).label = update;
+    updatedSchedule[day].find((slot) => slot.timeSlot === time).label = update;
     setSchedule(updatedSchedule);
     setupdated((updated) => updated + 1);
     setSavedChanges(false);
@@ -129,10 +129,9 @@ function Schedule() {
         onClick={copyScheduleLink}
         className="bg-blue-100 hover:bg-blue-300 p-1 rounded-md mx-2"
       >
-        Copy schedule link to share : vishesh-pandey.github.io/weekly/#/share/
-        {email.slice(0, email.length - 10)}
+        Copy schedule link to share
       </button>
-      <div>
+      <div className="timezones bg-gray-400">
         <button
           onClick={() => {
             changeTimeZone("Asia/Kolkata");
@@ -147,28 +146,10 @@ function Schedule() {
           }}
           className="bg-gray-300 px-2 mx-2 rounded-md"
         >
-          British Summer Time (BST) - Europe/London
-        </button>
-        <button
-          onClick={() => {
-            changeTimeZone("Europe/Lisbon");
-          }}
-          className="bg-gray-300 px-2 mx-2 rounded-md"
-        >
-          Western European Summer Time (WEST) - Europe/Lisbon
-        </button>
-        <button
-          onClick={() => {
-            changeTimeZone("EST");
-          }}
-          className="bg-gray-300 px-2 mx-2 rounded-md"
-        >
-          EST
+          GMT - Europe/London
         </button>
       </div>
-      <div>
-        <h3>Current time zone : {currentTimeZone}</h3>
-      </div>
+
       <div
         style={{ height: "50vh" }}
         className="text-clip border-2 border-black overflow-auto rounded-md"
@@ -194,7 +175,7 @@ function Schedule() {
                   <td
                     key={`${day}-${time}`}
                     className={`border px-4 py-2 rounded-md ${
-                      schedule[day].find((slot) => slot.timeUTC === time)
+                      schedule[day].find((slot) => slot.timeSlot === time)
                         .label === "free"
                         ? "bg-green-300"
                         : "bg-red-300"
@@ -203,12 +184,12 @@ function Schedule() {
                     <div className="d-flex flex justify-between">
                       <span>
                         {
-                          schedule[day].find((slot) => slot.timeUTC === time)
+                          schedule[day].find((slot) => slot.timeSlot === time)
                             .label
                         }
                       </span>
                       <span>
-                        {schedule[day].find((slot) => slot.timeUTC === time)
+                        {schedule[day].find((slot) => slot.timeSlot === time)
                           .label === "free" ? (
                           <button
                             onClick={() => {

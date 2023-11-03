@@ -9,11 +9,11 @@ const convertScheduleToTimeZone = (
 
   Object.keys(schedule).forEach((day) => {
     convertedSchedule[day] = schedule[day].map((timeSlot) => {
-      const sourceTime = moment.tz(timeSlot.timeUTC, "HH:mm", sourceTimeZone);
+      const sourceTime = moment.tz(timeSlot.timeSlot, "HH:mm", sourceTimeZone);
       const convertedTime = sourceTime.clone().tz(targetTimeZone);
 
       return {
-        timeUTC: convertedTime.format("HH:mm"),
+        timeSlot: convertedTime.format("HH:mm"),
         label: timeSlot.label,
       };
     });
