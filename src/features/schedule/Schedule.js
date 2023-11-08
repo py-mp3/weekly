@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import data from "./data.json";
-import moment from "moment-timezone";
 import convertScheduleToTimeZone from "./convertTimeZone";
 
 import { db, auth } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
+import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import data from "./data.json";
 
 function Schedule() {
   const [updated, setupdated] = useState(0);
@@ -35,14 +36,29 @@ function Schedule() {
       alert("Unable to connect!");
     }
   };
-
   const editSchedule = (day, time, update) => {
-    let updatedSchedule = schedule;
-    updatedSchedule[day].find((slot) => slot.timeSlot === time).label = update;
-    setSchedule(updatedSchedule);
-    setupdated((updated) => updated + 1);
-    setSavedChanges(false);
-    setStatus("Not saved");
+    // Create a copy of the schedule
+    const updatedSchedule = { ...schedule };
+
+    // Find the specific time slot to update
+    const updatedTimeSlot = updatedSchedule[day].find(
+      (slot) => slot.timeSlot === time
+    );
+
+    if (updatedTimeSlot) {
+      // Update the label
+      updatedTimeSlot.label = update;
+
+      // Update the state with the modified schedule
+      setSchedule(updatedSchedule);
+
+      // Update the saved changes state and status
+      setupdated((updated) => updated + 1);
+      setSavedChanges(false);
+      setStatus("Not saved");
+    } else {
+      console.error("Time slot not found in the schedule.");
+    }
   };
 
   const copyScheduleLink = async () => {
@@ -56,8 +72,14 @@ function Schedule() {
   };
 
   const changeTimeZone = (to) => {
-    setSchedule(convertScheduleToTimeZone(schedule, currentTimeZone, to));
+    let convertedSchedule = convertScheduleToTimeZone(
+      schedule,
+      currentTimeZone,
+      to
+    );
+    setSchedule(convertedSchedule);
     setCurrentTimeZone(to);
+    console.log("new converted Schedule : ", convertedSchedule);
   };
 
   useEffect(() => {
@@ -112,6 +134,8 @@ function Schedule() {
         )}
         <span> {updated} unsaved changes</span>
       </div>
+
+      <h2 className="text-bold">Current Time Zone : {currentTimeZone} </h2>
 
       <a
         target="_blank"
