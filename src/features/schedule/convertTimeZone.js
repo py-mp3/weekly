@@ -1,12 +1,13 @@
 import moment from "moment-timezone";
-
+/*
+ * converts the schedule from one timezone to other
+ */
 const convertScheduleToTimeZone = (
   schedule,
   sourceTimeZone,
   targetTimeZone
 ) => {
-  const convertedSchedule = schedule;
-  let finalSchedule = {};
+  let convertedSchedule = {};
 
   let weekDays = [
     "Sunday",
@@ -22,12 +23,14 @@ const convertScheduleToTimeZone = (
   const sourceOffset = moment.tz(sourceTimeZone).utcOffset();
   const targetOffset = moment.tz(targetTimeZone).utcOffset();
 
-  console.log("sourceOffset : ", sourceOffset);
-  console.log("targetOffset : ", targetOffset);
-
   let diffOffset = targetOffset - sourceOffset;
-  console.log(diffOffset);
 
+  /*
+   * function checks if day needs to be shift while updating label for different timezone
+   * returns 0 if day is not required to shift
+   * returns -1 if day needs to shift back by one day
+   * return 1 if day need to shift ahead by one day
+   */
   const updateDay = (timeSlot, diffOffset) => {
     timeSlot = timeSlot.toString();
     let timeInfo = timeSlot.split(":");
@@ -52,22 +55,20 @@ const convertScheduleToTimeZone = (
     }
   };
 
-  Object.keys(convertedSchedule).forEach((day) => {
-    finalSchedule[day] = convertedSchedule[day].map((timeSlot) => {
+  /*
+   * this updates all the labels according to target timezone
+   */
+  Object.keys(schedule).forEach((day) => {
+    convertedSchedule[day] = schedule[day].map((timeSlot) => {
       const targetTime = moment.tz(timeSlot.timeSlot, "HH:mm", targetTimeZone);
       let sourceTime = targetTime.clone().tz(sourceTimeZone);
       sourceTime = sourceTime.format("HH:mm");
 
-      console.log("source Time : ", sourceTime);
-
       let dayDiff = updateDay(timeSlot.timeSlot, diffOffset);
-      console.log("day diff : ", dayDiff);
 
       let sourceDayIndex = (weekDays.indexOf(day) + dayDiff) % 7;
       sourceDayIndex = sourceDayIndex < 0 ? sourceDayIndex + 7 : sourceDayIndex;
       let sourceDay = weekDays[sourceDayIndex];
-
-      console.log("source day : ", sourceDay);
 
       let targetLabel = schedule[sourceDay].find(
         (obj) => obj.timeSlot === sourceTime
@@ -80,7 +81,7 @@ const convertScheduleToTimeZone = (
     });
   });
 
-  return finalSchedule;
+  return convertedSchedule;
 };
 
 export default convertScheduleToTimeZone;

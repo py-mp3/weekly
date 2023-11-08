@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import data from "./data.json";
-import moment from "moment-timezone";
 import convertScheduleToTimeZone from "./convertTimeZone";
 
 import { db, auth } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
+import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import data from "./data.json";
 
 function Schedule() {
   const [updated, setupdated] = useState(0);
