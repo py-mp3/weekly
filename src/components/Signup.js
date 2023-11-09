@@ -45,9 +45,9 @@ const Signup = () => {
 
   return (
     <div className="w-6/12 text-center m-auto">
-      <h1 class="text-center">Sign Up to Weekly</h1>
+      <h1 className="text-center">Sign Up to Weekly</h1>
       <form onSubmit={handleSubmit}>
-        <div class="my-2">
+        <div className="my-2">
           <input
             type="email"
             className="bg-gray-100 rounded-md shadow-sm w-full"
@@ -56,7 +56,7 @@ const Signup = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div class="my-2">
+        <div className="my-2">
           <input
             type="password"
             className="bg-gray-100 rounded-md shadow-sm w-full"
@@ -65,7 +65,7 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {error && <p class="text-red-500 my-2">{error}</p>}
+        {error && <p className="text-red-500 my-2">{error}</p>}
         <button
           type="submit"
           className="bg-blue-500 text-white rounded-md shadow-sm w-full my-2"

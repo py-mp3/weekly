@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import convertScheduleToTimeZone from "./convertTimeZone";
 
 import { auth } from "../../firebase";
@@ -20,6 +20,7 @@ function Schedule() {
   const [email, setEmail] = useState("loading...");
 
   const dispatch = useDispatch();
+  const dispatchRef = useRef(dispatch);
   const userData = useSelector(selectUserData);
 
   const days = [
@@ -66,15 +67,15 @@ function Schedule() {
   useEffect(() => {
     if (auth.currentUser) {
       setEmail(auth.currentUser.email);
-      dispatch(fetchUserDataFromFirebase(userData));
+      dispatchRef.current(fetchUserDataFromFirebase());
     }
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setEmail(user.email);
-        dispatch(fetchUserDataFromFirebase(userData));
+        dispatchRef.current(fetchUserDataFromFirebase());
       }
     });
-  }, []);
+  }, [dispatchRef]);
 
   return (
     <div>

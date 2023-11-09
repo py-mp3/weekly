@@ -31,19 +31,16 @@ export const updateTimezone = createAsyncThunk(
 
 export const fetchUserDataFromFirebase = createAsyncThunk(
   "userData/fetchUserDataFromFirebase",
-  async (newUserData) => {
+  async () => {
     try {
       const docRef = doc(db, "users/" + auth.currentUser.email);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         return docSnap.data().userData;
-      } else {
-        return newUserData;
       }
     } catch (e) {
       console.log(e);
-      return newUserData;
     }
   }
 );
