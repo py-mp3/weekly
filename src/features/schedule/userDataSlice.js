@@ -38,9 +38,12 @@ export const fetchUserDataFromFirebase = createAsyncThunk(
 
       if (docSnap.exists()) {
         return docSnap.data().userData;
+      } else {
+        return initialState.userData;
       }
     } catch (e) {
       console.log(e);
+      return initialState.userData;
     }
   }
 );
@@ -94,9 +97,13 @@ export const userDataSlice = createSlice({
     builder.addCase(updateSchedule.fulfilled, (state, action) => {
       state.userData = action.payload;
     });
-    builder.addCase(fetchUserDataFromFirebase.fulfilled, (state, action) => {
-      state.userData = action.payload;
-    });
+    builder
+      .addCase(fetchUserDataFromFirebase.fulfilled, (state, action) => {
+        state.userData = action.payload;
+      })
+      .addCase(fetchUserDataFromFirebase.rejected, (state) => {
+        state.userData = initialState;
+      });
     builder.addCase(updateTimezone.fulfilled, (state, action) => {
       state.userData = action.payload;
     });
