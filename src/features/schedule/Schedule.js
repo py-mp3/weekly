@@ -1,64 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import convertScheduleToTimeZone from "./convertTimeZone";
 
-import { db, auth } from "../../firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import data from "./data.json";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUserDataFromFirebase,
+  selectUserData,
+  updateSchedule,
+  updateTimezone,
+} from "./userDataSlice";
 
 function Schedule() {
-  const [updated, setupdated] = useState(0);
-  const [schedule, setSchedule] = useState(data.schedule);
-  const [savedChanges, setSavedChanges] = useState(true);
-  const [status, setStatus] = useState("saved");
   const [email, setEmail] = useState("loading...");
-  const [currentTimeZone, setCurrentTimeZone] = useState("Asia/Kolkata");
 
-  const days = Object.keys(data.schedule);
-  const timings = data.schedule[days[0]].map((slot) => slot.timeSlot);
+  const dispatch = useDispatch();
+  const dispatchRef = useRef(dispatch);
+  const userData = useSelector(selectUserData);
 
-  const saveChanges = async () => {
-    setStatus("Updating schedule... please wait");
-    try {
-      await setDoc(doc(db, "users/" + email), {
-        schedule: schedule,
-      });
-      setSavedChanges(true);
-      setupdated(0);
-      setStatus("Schedule updated ");
-      toast("Changes update to weekly schedule");
-    } catch {
-      alert("Unable to connect!");
-    }
-  };
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const timings = userData.schedule[days[0]].map((slot) => slot.timeSlot);
+
   const editSchedule = (day, time, update) => {
-    // Create a copy of the schedule
-    const updatedSchedule = { ...schedule };
-
-    // Find the specific time slot to update
-    const updatedTimeSlot = updatedSchedule[day].find(
-      (slot) => slot.timeSlot === time
-    );
-
-    if (updatedTimeSlot) {
-      // Update the label
-      updatedTimeSlot.label = update;
-
-      // Update the state with the modified schedule
-      setSchedule(updatedSchedule);
-
-      // Update the saved changes state and status
-      setupdated((updated) => updated + 1);
-      setSavedChanges(false);
-      setStatus("Not saved");
-    } else {
-      console.error("Time slot not found in the schedule.");
-    }
+    dispatch(updateSchedule({ userData, day, time, update }));
   };
 
   const copyScheduleLink = async () => {
@@ -73,36 +50,32 @@ function Schedule() {
 
   const changeTimeZone = (to) => {
     let convertedSchedule = convertScheduleToTimeZone(
-      schedule,
-      currentTimeZone,
+      userData.schedule,
+      userData.timezone,
       to
     );
-    setSchedule(convertedSchedule);
-    setCurrentTimeZone(to);
-    console.log("new converted Schedule : ", convertedSchedule);
+    dispatch(
+      updateTimezone({
+        name: "user",
+        primaryTimezone: "IST",
+        timezone: to,
+        schedule: convertedSchedule,
+      })
+    );
   };
 
   useEffect(() => {
-    const getLatestSchedule = async () => {
-      const docRef = doc(db, "users/" + auth.currentUser.email);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setSchedule(docSnap.data().schedule);
-      } else {
-        console.log("No such document!");
-      }
-    };
     if (auth.currentUser) {
       setEmail(auth.currentUser.email);
-      getLatestSchedule();
+      dispatchRef.current(fetchUserDataFromFirebase());
     }
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setEmail(user.email);
-        getLatestSchedule();
+        dispatchRef.current(fetchUserDataFromFirebase());
       }
     });
-  }, []);
+  }, [dispatchRef]);
 
   return (
     <div>
@@ -110,32 +83,7 @@ function Schedule() {
       <h3>Last Updated: {moment().format("MMMM Do YYYY, h:mm:ss a")}</h3>
       <h2 className="text-2xl font-bold mb-4">Weekly Schedule</h2>
 
-      <button
-        className={`bg-yellow-300 p-2 rounded-md hover:bg-yellow-600 ${
-          savedChanges ? "animate-none" : "animate-bounce"
-        } `}
-        onClick={saveChanges}
-      >
-        Save changes
-      </button>
-
-      <span> {status}</span>
-
-      <div>
-        Saved changes :
-        {savedChanges ? (
-          <span className="text-green-700 font-bold">
-            Your schedule is synced with weekly
-          </span>
-        ) : (
-          <span className="text-red-500 font-bold animate-pulse">
-            Please save the changes.
-          </span>
-        )}
-        <span> {updated} unsaved changes</span>
-      </div>
-
-      <h2 className="text-bold">Current Time Zone : {currentTimeZone} </h2>
+      <h2 className="text-bold">Current Time Zone : {userData.timezone} </h2>
 
       <a
         target="_blank"
@@ -199,8 +147,9 @@ function Schedule() {
                   <td
                     key={`${day}-${time}`}
                     className={`border px-4 py-2 rounded-md ${
-                      schedule[day].find((slot) => slot.timeSlot === time)
-                        .label === "free"
+                      userData.schedule[day].find(
+                        (slot) => slot.timeSlot === time
+                      ).label === "free"
                         ? "bg-green-300"
                         : "bg-red-300"
                     }`}
@@ -208,13 +157,15 @@ function Schedule() {
                     <div className="d-flex flex justify-between">
                       <span>
                         {
-                          schedule[day].find((slot) => slot.timeSlot === time)
-                            .label
+                          userData.schedule[day].find(
+                            (slot) => slot.timeSlot === time
+                          ).label
                         }
                       </span>
                       <span>
-                        {schedule[day].find((slot) => slot.timeSlot === time)
-                          .label === "free" ? (
+                        {userData.schedule[day].find(
+                          (slot) => slot.timeSlot === time
+                        ).label === "free" ? (
                           <button
                             onClick={() => {
                               editSchedule(day, time, "not free");

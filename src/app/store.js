@@ -1,9 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
+import userDataReducer from "../features/schedule/userDataSlice";
 
 export const store = configureStore({
   reducer: {
-    //   note: noteReducer,
-    //   todo: todoReducer,
-    //   website: websiteReducer,
+    userData: userDataReducer,
   },
 });

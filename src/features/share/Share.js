@@ -2,25 +2,32 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import data from "./../schedule/data.json";
-import moment from "moment-timezone";
 
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 function Share() {
   const { slug } = useParams();
-  const [schedule, setSchedule] = useState(data.schedule);
+  const [schedule, setSchedule] = useState(data);
   const [incorrectProfile, setIncorrectProfile] = useState(false);
 
-  const days = Object.keys(data.schedule);
-  const timings = data.schedule[days[0]].map((slot) => slot.timeUTC);
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const timings = data.schedule[days[0]].map((slot) => slot.timeSlot);
 
   useEffect(() => {
     const getLatestSchedule = async () => {
       const docRef = doc(db, "users/" + slug + "@gmail.com");
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setSchedule(docSnap.data().schedule);
+        setSchedule(docSnap.data().userData);
       } else {
         console.log("No such document!");
         setIncorrectProfile(true);
@@ -37,11 +44,9 @@ function Share() {
         </div>
       ) : (
         <div>
-          <h1>Main profile : {slug}</h1>
-          <h1>Main time {moment().format("MMMM Do YYYY, h:mm:ss a")}</h1>
-          <h1>JS : {new Date().toString()}</h1>
+          <h1>Profile : {slug}</h1>
           <h2 className="text-2xl font-bold mb-4">Weekly Schedule of {slug}</h2>
-
+          <h1>Timezone : {schedule.timezone}</h1>
           <table className="table-auto w-full">
             <thead>
               <tr>
@@ -61,8 +66,9 @@ function Share() {
                     <td
                       key={`${day}-${time}`}
                       className={`border px-4 py-2 ${
-                        schedule[day].find((slot) => slot.timeUTC === time)
-                          .label === "free"
+                        schedule.schedule[day].find(
+                          (slot) => slot.timeSlot === time
+                        ).label === "free"
                           ? "bg-green-300"
                           : "bg-red-300"
                       }`}
@@ -70,8 +76,9 @@ function Share() {
                       <div className="d-flex flex justify-between">
                         <span>
                           {
-                            schedule[day].find((slot) => slot.timeUTC === time)
-                              .label
+                            schedule.schedule[day].find(
+                              (slot) => slot.timeSlot === time
+                            ).label
                           }
                         </span>
                       </div>
