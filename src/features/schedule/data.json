@@ -1,4 +1,6 @@
 {
+  "name": "user",
+  "primaryTimezone": "IST",
   "timezone": "IST",
   "schedule": {
     "Sunday": [
@@ -10,11 +12,11 @@
       { "timeSlot": "02:30", "label": "free" },
       { "timeSlot": "03:00", "label": "free" },
       { "timeSlot": "03:30", "label": "free" },
-      { "timeSlot": "04:00", "label": "not free" },
-      { "timeSlot": "04:30", "label": "not free" },
-      { "timeSlot": "05:00", "label": "not free" },
-      { "timeSlot": "05:30", "label": "not free" },
-      { "timeSlot": "06:00", "label": "not free" },
+      { "timeSlot": "04:00", "label": "free" },
+      { "timeSlot": "04:30", "label": "free" },
+      { "timeSlot": "05:00", "label": "free" },
+      { "timeSlot": "05:30", "label": "free" },
+      { "timeSlot": "06:00", "label": "free" },
       { "timeSlot": "06:30", "label": "free" },
       { "timeSlot": "07:00", "label": "free" },
       { "timeSlot": "07:30", "label": "free" },
