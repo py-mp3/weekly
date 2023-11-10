@@ -143,6 +143,38 @@ function Schedule() {
         >
           GMT - Europe/London
         </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/Los_Angeles");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          PST - America/Los_Angeles
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/Denver");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          MST - America/Denver
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/Chicago");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          CST - America/Chicago
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/New_York");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          EST - America/New York
+        </button>
       </div>
 
       <div
