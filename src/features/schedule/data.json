@@ -1,7 +1,8 @@
 {
   "name": "user",
-  "primaryTimezone": "IST",
-  "timezone": "IST",
+  "lastUpdated": "not yet",
+  "primaryTimezone": "Asia/Kolkata",
+  "timezone": "Asia/Kolkata",
   "schedule": {
     "Sunday": [
       { "timeSlot": "00:00", "label": "free" },

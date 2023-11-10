@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
 import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
 import app, { auth } from "../../firebase";
-
 import data from "./data.json";
 
 const db = getFirestore(app);
@@ -48,39 +47,20 @@ export const fetchUserDataFromFirebase = createAsyncThunk(
   }
 );
 
-export const updateSchedule = createAsyncThunk(
-  "userData/updateSchedule",
-  async (data) => {
-    let userData = data.userData;
-    let givenday = data.day;
-    let giventime = data.time;
-    let update = data.update;
+export const updateScheduleOnDatabase = createAsyncThunk(
+  "userData/updateScheduleOnDatabase",
+  async (userData) => {
     try {
-      let updatedSchedule = {};
-
-      for (const day in userData.schedule) {
-        let slots = [];
-        for (const slot of userData.schedule[day]) {
-          if (slot.timeSlot === giventime && day === givenday) {
-            slots.push({ timeSlot: slot.timeSlot, label: update });
-          } else {
-            slots.push({ timeSlot: slot.timeSlot, label: slot.label });
-          }
-        }
-        updatedSchedule[day] = slots;
-      }
-
       let updatedUserData = {
-        name: "user",
-        primaryTimezone: "IST",
+        name: userData.name,
+        lastUpdated: new Date().toUTCString(),
+        primaryTimezone: userData.primaryTimezone,
         timezone: userData.timezone,
-        schedule: updatedSchedule,
+        schedule: userData.schedule,
       };
-
       await setDoc(doc(db, `users/${getAuth().currentUser.email}`), {
         userData: updatedUserData,
       });
-
       return updatedUserData;
     } catch (e) {
       console.log(e);
@@ -92,11 +72,55 @@ export const updateSchedule = createAsyncThunk(
 export const userDataSlice = createSlice({
   name: "userData",
   initialState,
-  reducers: {},
+  reducers: {
+    updateSchedule: (state, action) => {
+      let data = action.payload;
+      let userData = data.userData;
+      let givenday = data.day;
+      let giventime = data.time;
+      let update = data.update;
+
+      try {
+        let updatedSchedule = {};
+
+        for (const day in userData.schedule) {
+          let slots = [];
+          for (const slot of userData.schedule[day]) {
+            if (slot.timeSlot === giventime && day === givenday) {
+              slots.push({ timeSlot: slot.timeSlot, label: update });
+            } else {
+              slots.push({ timeSlot: slot.timeSlot, label: slot.label });
+            }
+          }
+          updatedSchedule[day] = slots;
+        }
+
+        let updatedUserData = {
+          name: "user",
+          lastUpdated: "updating",
+          primaryTimezone: "IST",
+          timezone: userData.timezone,
+          schedule: updatedSchedule,
+        };
+        state.userData = updatedUserData;
+        localStorage.setItem("userData", JSON.stringify(updatedUserData));
+      } catch (e) {
+        console.log(e);
+        state.userData = action.payload;
+      }
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(updateSchedule.fulfilled, (state, action) => {
-      state.userData = action.payload;
-    });
+    builder
+      .addCase(updateScheduleOnDatabase.fulfilled, (state, action) => {
+        state.userData = action.payload;
+      })
+      .addCase(updateScheduleOnDatabase.pending, (state) => {
+        state.userData.lastUpdated = "updating";
+      })
+      .addCase(updateScheduleOnDatabase.rejected, (state) => {
+        alert("Connection Issues!");
+      });
     builder
       .addCase(fetchUserDataFromFirebase.fulfilled, (state, action) => {
         state.userData = action.payload;
@@ -109,6 +133,8 @@ export const userDataSlice = createSlice({
     });
   },
 });
+
+export const { updateSchedule } = userDataSlice.actions;
 
 export const selectUserData = (state) => state.userData.userData;
 
