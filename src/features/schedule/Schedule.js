@@ -13,11 +13,13 @@ import {
   fetchUserDataFromFirebase,
   selectUserData,
   updateSchedule,
+  updateScheduleOnDatabase,
   updateTimezone,
 } from "./userDataSlice";
 
 function Schedule() {
   const [email, setEmail] = useState("loading...");
+  const [updatePending, setUpdatePending] = useState(null);
 
   const dispatch = useDispatch();
   const dispatchRef = useRef(dispatch);
@@ -34,8 +36,20 @@ function Schedule() {
   ];
   const timings = userData.schedule[days[0]].map((slot) => slot.timeSlot);
 
-  const editSchedule = (day, time, update) => {
+  const editSchedule = async (day, time, update) => {
+    if (updatePending) {
+      clearTimeout(updatePending);
+    }
+
     dispatch(updateSchedule({ userData, day, time, update }));
+
+    console.log("user data after dispatch : ", userData);
+    setUpdatePending(
+      setTimeout(() => {
+        console.log("happened now with userdata ", userData);
+        dispatch(updateScheduleOnDatabase(userData));
+      }, 2000)
+    );
   };
 
   const copyScheduleLink = async () => {
@@ -80,7 +94,7 @@ function Schedule() {
   return (
     <div>
       <ToastContainer />
-      <h3>Last Updated: {moment().format("MMMM Do YYYY, h:mm:ss a")}</h3>
+      <h1>{userData.lastUpdated}</h1>
       <h2 className="text-2xl font-bold mb-4">Weekly Schedule</h2>
 
       <h2 className="text-bold">Current Time Zone : {userData.timezone} </h2>
