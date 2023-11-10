@@ -50,9 +50,6 @@ export const fetchUserDataFromFirebase = createAsyncThunk(
 export const updateScheduleOnDatabase = createAsyncThunk(
   "userData/updateScheduleOnDatabase",
   async (userData) => {
-    console.log("userDataSlice ", userDataSlice);
-    console.log("given userdata ", userData);
-    console.log("updating database");
     try {
       let updatedUserData = {
         name: userData.name,
@@ -100,11 +97,13 @@ export const userDataSlice = createSlice({
 
         let updatedUserData = {
           name: "user",
+          lastUpdated: "updating",
           primaryTimezone: "IST",
           timezone: userData.timezone,
           schedule: updatedSchedule,
         };
         state.userData = updatedUserData;
+        localStorage.setItem("userData", JSON.stringify(updatedUserData));
       } catch (e) {
         console.log(e);
         state.userData = action.payload;
@@ -118,6 +117,9 @@ export const userDataSlice = createSlice({
       })
       .addCase(updateScheduleOnDatabase.pending, (state) => {
         state.userData.lastUpdated = "updating";
+      })
+      .addCase(updateScheduleOnDatabase.rejected, (state) => {
+        alert("Connection Issues!");
       });
     builder
       .addCase(fetchUserDataFromFirebase.fulfilled, (state, action) => {

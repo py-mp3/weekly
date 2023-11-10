@@ -4,7 +4,6 @@ import convertScheduleToTimeZone from "./convertTimeZone";
 import { auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,12 +17,12 @@ import {
 } from "./userDataSlice";
 
 function Schedule() {
+  const userData = useSelector(selectUserData);
   const [email, setEmail] = useState("loading...");
   const [updatePending, setUpdatePending] = useState(null);
 
   const dispatch = useDispatch();
   const dispatchRef = useRef(dispatch);
-  const userData = useSelector(selectUserData);
 
   const days = [
     "Sunday",
@@ -43,11 +42,12 @@ function Schedule() {
 
     dispatch(updateSchedule({ userData, day, time, update }));
 
-    console.log("user data after dispatch : ", userData);
     setUpdatePending(
       setTimeout(() => {
-        console.log("happened now with userdata ", userData);
-        dispatch(updateScheduleOnDatabase(userData));
+        dispatch(
+          updateScheduleOnDatabase(JSON.parse(localStorage.getItem("userData")))
+        );
+        toast("schedule updated");
       }, 2000)
     );
   };
@@ -94,11 +94,16 @@ function Schedule() {
   return (
     <div>
       <ToastContainer />
-      <h1>{userData.lastUpdated}</h1>
-      <h2 className="text-2xl font-bold mb-4">Weekly Schedule</h2>
-
-      <h2 className="text-bold">Current Time Zone : {userData.timezone} </h2>
-
+      <h2 className="text-2xl font-bold mb-4">
+        Weekly Schedule
+        <span className="m-2">
+          {userData.lastUpdated === "updating" ? (
+            <i className="bi bi-arrow-clockwise"></i>
+          ) : (
+            <i className="bi bi-cloud-check"></i>
+          )}
+        </span>
+      </h2>
       <a
         target="_blank"
         rel="noreferrer"
@@ -117,12 +122,16 @@ function Schedule() {
       >
         Copy schedule link to share
       </button>
-      <div className="timezones bg-gray-400">
+
+      <div className="bg-gray-300 px-2 m-2 rounded-md text-center text-2xl">
+        Current Time Zone : {userData.timezone}{" "}
+      </div>
+      <div className="timezones bg-gray-300 m-3 p-2">
         <button
           onClick={() => {
             changeTimeZone("Asia/Kolkata");
           }}
-          className="bg-gray-300 px-2 mx-2 rounded-md"
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
         >
           IST
         </button>
@@ -130,7 +139,7 @@ function Schedule() {
           onClick={() => {
             changeTimeZone("Europe/London");
           }}
-          className="bg-gray-300 px-2 mx-2 rounded-md"
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
         >
           GMT - Europe/London
         </button>
