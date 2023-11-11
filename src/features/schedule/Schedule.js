@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import convertScheduleToTimeZone from "./convertTimeZone";
+import convertScheduleToTimeZone from "../convertTimeZone";
 
 import { auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";

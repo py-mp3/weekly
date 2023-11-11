@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
 import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
 import app, { auth } from "../../firebase";
-import data from "./data.json";
+import data from "../data.json";
 
 const db = getFirestore(app);
 
