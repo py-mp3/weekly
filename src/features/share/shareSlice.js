@@ -1,9 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { getAuth } from "firebase/auth";
-import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
-import app, { auth } from "../../firebase";
+
+import { doc, getFirestore, getDoc } from "firebase/firestore";
+import app from "../../firebase";
+
 import data from "../data.json";
+
 import convertScheduleToTimeZone from "../convertTimeZone";
 
 const db = getFirestore(app);

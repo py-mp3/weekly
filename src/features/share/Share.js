@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  convertTimezone,
+  fetchSharedDataFromFirebase,
+  selectSharedData,
+} from "./shareSlice";
 
 import data from "../data.json";
 
-import { db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSharedDataFromFirebase, selectSharedData } from "./shareSlice";
-
 function Share() {
   const { slug } = useParams();
-  const [incorrectProfile, setIncorrectProfile] = useState(false);
-
   const sharedData = useSelector(selectSharedData);
 
   const days = [
@@ -28,6 +28,16 @@ function Share() {
   const dispatch = useDispatch();
   const dispatchRef = useRef(dispatch);
 
+  const changeTimeZone = (to) => {
+    dispatch(
+      convertTimezone({
+        schedule: sharedData.schedule,
+        timezone: sharedData.timezone,
+        to: to,
+      })
+    );
+  };
+
   useEffect(() => {
     const getLatestSchedule = async () => {
       dispatchRef.current(fetchSharedDataFromFirebase(`${slug}@gmail.com`));
@@ -39,15 +49,71 @@ function Share() {
     <div className="p-4">
       {sharedData.incorrectProfile ? (
         <div className="text-red-500 text-5xl text-center font-bold">
-          Wrong Profile - Please check link again
+          <h1>Wrong Profile - Please check link again</h1>
+          <p className="text-yellow-500 text-2xl my-6">
+            {slug} not found on weekly
+          </p>
         </div>
       ) : (
-        <div></div>
+        <div>
+          <h1>Profile : {slug}</h1>
+          <h2 className="text-2xl font-bold mb-4">Weekly Schedule of {slug}</h2>
+          <h1 className="text-2xl font-bold mb-4">
+            Timezone : {sharedData.timezone}
+          </h1>
+        </div>
       )}
+      <div className="timezones bg-gray-300 m-3 p-2">
+        <button
+          onClick={() => {
+            changeTimeZone("Asia/Kolkata");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          IST
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("Europe/London");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          GMT - Europe/London
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/Los_Angeles");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          PST - America/Los_Angeles
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/Denver");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          MST - America/Denver
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/Chicago");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          CST - America/Chicago
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("America/New_York");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          EST - America/New York
+        </button>
+      </div>
       <div>
-        <h1>Profile : {slug}</h1>
-        <h2 className="text-2xl font-bold mb-4">Weekly Schedule of {slug}</h2>
-        <h1>Timezone : {sharedData.timezone}</h1>
         <table className="table-auto w-full">
           <thead>
             <tr>
