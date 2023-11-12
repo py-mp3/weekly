@@ -38,6 +38,18 @@ function Share() {
     );
   };
 
+  const getTotalFreeSlots = () => {
+    let freeSlots = 0;
+    Object.keys(sharedData.schedule).forEach((day) => {
+      for (let slot of sharedData.schedule[day]) {
+        if (slot.label === "free") {
+          freeSlots++;
+        }
+      }
+    });
+    return freeSlots;
+  };
+
   useEffect(() => {
     const getLatestSchedule = async () => {
       dispatchRef.current(fetchSharedDataFromFirebase(`${slug}@gmail.com`));
@@ -57,9 +69,12 @@ function Share() {
       ) : (
         <div>
           <h1>Profile : {slug}</h1>
-          <h2 className="text-2xl font-bold mb-4">Weekly Schedule of {slug}</h2>
-          <h1 className="text-2xl font-bold mb-4">
+          <h1 className="text-2xl font-bold">Weekly Schedule of {slug}</h1>
+          <h1 className="text-2xl font-bold">
             Timezone : {sharedData.timezone}
+          </h1>
+          <h1 className="text-2xl font-bold">
+            Total Free Slots : {getTotalFreeSlots()}
           </h1>
         </div>
       )}
@@ -132,7 +147,7 @@ function Share() {
                 {days.map((day) => (
                   <td
                     key={`${day}-${time}`}
-                    className={`border px-4 py-2 ${
+                    className={`border border-black px-4 py-2 ${
                       sharedData.schedule[day].find(
                         (slot) => slot.timeSlot === time
                       ).label === "free"
@@ -140,14 +155,16 @@ function Share() {
                         : "bg-red-300"
                     }`}
                   >
-                    <div className="d-flex flex justify-between">
-                      <span>
-                        {
-                          sharedData.schedule[day].find(
-                            (slot) => slot.timeSlot === time
-                          ).label
-                        }
-                      </span>
+                    <div className="d-flex flex justify-betweens">
+                      <div className="w-full">
+                        <span>
+                          {
+                            sharedData.schedule[day].find(
+                              (slot) => slot.timeSlot === time
+                            ).label
+                          }
+                        </span>
+                      </div>
                     </div>
                   </td>
                 ))}
