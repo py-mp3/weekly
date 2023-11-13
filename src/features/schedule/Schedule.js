@@ -52,6 +52,32 @@ function Schedule() {
     );
   };
 
+  const freeSlotsByDay = (givenDay) => {
+    let freeSlots = 0;
+    Object.keys(userData.schedule).forEach((day) => {
+      if (day === givenDay) {
+        for (let slot of userData.schedule[day]) {
+          if (slot.label === "free") {
+            freeSlots++;
+          }
+        }
+      }
+    });
+    return freeSlots;
+  };
+
+  const getTotalFreeSlots = () => {
+    let freeSlots = 0;
+    Object.keys(userData.schedule).forEach((day) => {
+      for (let slot of userData.schedule[day]) {
+        if (slot.label === "free") {
+          freeSlots++;
+        }
+      }
+    });
+    return freeSlots;
+  };
+
   const copyScheduleLink = async () => {
     navigator.clipboard.writeText(
       `https://vishesh-pandey.github.io/weekly/#/share/${email.slice(
@@ -186,10 +212,16 @@ function Schedule() {
             <tr>
               <th className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
                 {userData.timezone}
+                <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-xs">
+                  Total : {getTotalFreeSlots()}
+                </span>
               </th>
               {days.map((day) => (
-                <th key={day} className="px-4 py-2">
+                <th key={day} className="px-4 py-2 relative">
                   {day}
+                  <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-xs">
+                    {freeSlotsByDay(day)}
+                  </span>
                 </th>
               ))}
             </tr>

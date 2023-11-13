@@ -50,6 +50,20 @@ function Share() {
     return freeSlots;
   };
 
+  const freeSlotsByDay = (givenDay) => {
+    let freeSlots = 0;
+    Object.keys(sharedData.schedule).forEach((day) => {
+      if (day === givenDay) {
+        for (let slot of sharedData.schedule[day]) {
+          if (slot.label === "free") {
+            freeSlots++;
+          }
+        }
+      }
+    });
+    return freeSlots;
+  };
+
   useEffect(() => {
     const getLatestSchedule = async () => {
       dispatchRef.current(fetchSharedDataFromFirebase(`${slug}@gmail.com`));
@@ -134,10 +148,19 @@ function Share() {
             <tr>
               <th className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
                 {sharedData.timezone}
+                <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-xs">
+                  Total : {getTotalFreeSlots()}
+                </span>
               </th>
               {days.map((day) => (
-                <th key={day} className="px-4 py-2 border border-black w-1/12 ">
+                <th
+                  key={day}
+                  className="px-4 py-2 border border-black w-1/12 relative"
+                >
                   {day}
+                  <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-sm">
+                    {freeSlotsByDay(day)}
+                  </span>
                 </th>
               ))}
             </tr>
