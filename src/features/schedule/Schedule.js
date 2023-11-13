@@ -124,7 +124,7 @@ function Schedule() {
       </button>
 
       <div className="bg-gray-300 px-2 m-2 rounded-md text-center text-2xl">
-        Current Time Zone : {userData.timezone}{" "}
+        Current Time Zone : {userData.timezone}
       </div>
       <div className="timezones bg-gray-300 m-3 p-2">
         <button
@@ -184,7 +184,9 @@ function Schedule() {
         <table className="table-auto w-full">
           <thead className="sticky top-0 left-0 right-0 bg-yellow-300 ">
             <tr>
-              <th className="px-4 py-2 w-1/12 "></th>
+              <th className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
+                {userData.timezone}
+              </th>
               {days.map((day) => (
                 <th key={day} className="px-4 py-2">
                   {day}
@@ -195,13 +197,13 @@ function Schedule() {
           <tbody className="">
             {timings.map((time) => (
               <tr key={time}>
-                <td className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
+                <td className="px-4 py-2 w-1/12 sticky top-8 left-0 right-0 bg-yellow-300">
                   {time}
                 </td>
                 {days.map((day) => (
                   <td
                     key={`${day}-${time}`}
-                    className={`border px-4 py-2 rounded-md ${
+                    className={`border px-4 py-2 rounded-md w-1/12 ${
                       userData.schedule[day].find(
                         (slot) => slot.timeSlot === time
                       ).label === "free"

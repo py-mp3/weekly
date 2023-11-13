@@ -130,11 +130,13 @@ function Share() {
       </div>
       <div>
         <table className="table-auto w-full">
-          <thead>
+          <thead className="sticky top-0 left-0 right-0 bg-yellow-300 ">
             <tr>
-              <th className="px-4 py-2 w-1/12"></th>
+              <th className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
+                {sharedData.timezone}
+              </th>
               {days.map((day) => (
-                <th key={day} className="px-4 py-2">
+                <th key={day} className="px-4 py-2 border border-black w-1/12 ">
                   {day}
                 </th>
               ))}
@@ -143,11 +145,13 @@ function Share() {
           <tbody>
             {timings.map((time) => (
               <tr key={time}>
-                <td className="px-4 py-2 w-1/12">{time}</td>
+                <td className="px-4 py-2 w-1/12 sticky top-10 left-0 right-0 bg-yellow-300 border-black border">
+                  {time}
+                </td>
                 {days.map((day) => (
                   <td
                     key={`${day}-${time}`}
-                    className={`border border-black px-4 py-2 ${
+                    className={`border border-black px-4 py-2 w-1/12 ${
                       sharedData.schedule[day].find(
                         (slot) => slot.timeSlot === time
                       ).label === "free"
