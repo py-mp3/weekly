@@ -24,6 +24,15 @@ function Schedule() {
   const dispatch = useDispatch();
   const dispatchRef = useRef(dispatch);
 
+  const timezoneOfPlace = {
+    "Asia/Kolkata": "IST",
+    "Europe/London": "GMT",
+    "America/Los_Angeles": "PST",
+    "America/Denver": "MST",
+    "America/Chicago": "CST",
+    "America/New_York": "EST",
+  };
+
   const days = [
     "Sunday",
     "Monday",
@@ -155,22 +164,6 @@ function Schedule() {
       <div className="timezones bg-gray-300 m-3 p-2">
         <button
           onClick={() => {
-            changeTimeZone("Asia/Kolkata");
-          }}
-          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
-        >
-          IST
-        </button>
-        <button
-          onClick={() => {
-            changeTimeZone("Europe/London");
-          }}
-          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
-        >
-          GMT - Europe/London
-        </button>
-        <button
-          onClick={() => {
             changeTimeZone("America/Los_Angeles");
           }}
           className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
@@ -201,6 +194,23 @@ function Schedule() {
         >
           EST - America/New York
         </button>
+
+        <button
+          onClick={() => {
+            changeTimeZone("Europe/London");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          GMT - Europe/London
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("Asia/Kolkata");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          IST - India
+        </button>
       </div>
 
       <div
@@ -211,15 +221,15 @@ function Schedule() {
           <thead className="sticky top-0 left-0 right-0 bg-yellow-300 ">
             <tr>
               <th className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
-                {userData.timezone}
-                <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-xs">
+                {timezoneOfPlace[userData.timezone]}
+                <span className="bg-yellow-100 absolute top-0 right-0 px-2 rounded-md text-xs">
                   Total : {getTotalFreeSlots()}
                 </span>
               </th>
               {days.map((day) => (
                 <th key={day} className="px-4 py-2 relative">
                   {day}
-                  <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-xs">
+                  <span className="bg-yellow-100 absolute top-0 right-0 px-2 rounded-md text-xs">
                     {freeSlotsByDay(day)}
                   </span>
                 </th>
