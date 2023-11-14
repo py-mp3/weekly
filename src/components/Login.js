@@ -30,7 +30,7 @@ function Login() {
         <div className="my-2">
           <input
             type="email"
-            className="bg-gray-100 rounded-md shadow-sm w-full"
+            className="bg-gray-100 border-gray-400 border-2 p-1 rounded-md shadow-sm w-full"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -39,7 +39,7 @@ function Login() {
         <div className="my-2">
           <input
             type="password"
-            className="bg-gray-100 rounded-md shadow-sm w-full"
+            className="bg-gray-100 border-gray-400 border-2 p-1 rounded-md shadow-sm w-full"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -48,17 +48,21 @@ function Login() {
         {error && <p className="text-red-500 my-2">{error}</p>}
         <button
           type="submit"
-          className="bg-blue-500 text-white rounded-md shadow-sm w-full my-2"
+          className="bg-blue-500 text-white rounded-md shadow-sm w-full my-2 p-1"
         >
           Login
         </button>
         <Link
           to="/"
-          className="bg-green-500 text-white rounded-md shadow-sm w-full my-2"
+          className="bg-green-500 text-white rounded-md shadow-sm w-full my-2 p-1"
         >
-          Don't have account? Click here to Signup or to Continue with google
+          Don't have account? Click here to Signup or to Login with{" "}
+          <i className="bi bi-google"></i> google
         </Link>
       </form>
+      <p className="text-gray-500 font-bold py-2">
+        Create your weekly schedule and share it with others in one click
+      </p>
     </div>
   );
 }

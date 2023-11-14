@@ -14,6 +14,15 @@ function Share() {
   const { slug } = useParams();
   const sharedData = useSelector(selectSharedData);
 
+  const timezoneOfPlace = {
+    "Asia/Kolkata": "IST",
+    "Europe/London": "GMT",
+    "America/Los_Angeles": "PST",
+    "America/Denver": "MST",
+    "America/Chicago": "CST",
+    "America/New_York": "EST",
+  };
+
   const days = [
     "Sunday",
     "Monday",
@@ -95,22 +104,6 @@ function Share() {
       <div className="timezones bg-gray-300 m-3 p-2">
         <button
           onClick={() => {
-            changeTimeZone("Asia/Kolkata");
-          }}
-          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
-        >
-          IST
-        </button>
-        <button
-          onClick={() => {
-            changeTimeZone("Europe/London");
-          }}
-          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
-        >
-          GMT - Europe/London
-        </button>
-        <button
-          onClick={() => {
             changeTimeZone("America/Los_Angeles");
           }}
           className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
@@ -141,14 +134,31 @@ function Share() {
         >
           EST - America/New York
         </button>
+
+        <button
+          onClick={() => {
+            changeTimeZone("Europe/London");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          GMT - Europe/London
+        </button>
+        <button
+          onClick={() => {
+            changeTimeZone("Asia/Kolkata");
+          }}
+          className="bg-gray-300 px-2 mx-2 rounded-md border-4 hover:bg-black hover:text-white"
+        >
+          IST - India
+        </button>
       </div>
       <div>
         <table className="table-auto w-full">
           <thead className="sticky top-0 left-0 right-0 bg-yellow-300 ">
             <tr>
               <th className="px-4 py-2 w-1/12 sticky top-0 left-0 right-0 bg-yellow-300">
-                {sharedData.timezone}
-                <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-xs">
+                {timezoneOfPlace[sharedData.timezone]}
+                <span className="bg-yellow-100 absolute top-0 right-0 px-2 rounded-md text-xs">
                   Total : {getTotalFreeSlots()}
                 </span>
               </th>
@@ -158,7 +168,7 @@ function Share() {
                   className="px-4 py-2 border border-black w-1/12 relative"
                 >
                   {day}
-                  <span className="bg-green-500 absolute top-0 right-0 px-2 rounded-md text-sm">
+                  <span className="bg-yellow-100 absolute top-0 right-0 px-2 rounded-md text-sm">
                     {freeSlotsByDay(day)}
                   </span>
                 </th>
